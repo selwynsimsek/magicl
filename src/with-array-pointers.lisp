@@ -8,7 +8,7 @@
 ;;; foreign-compatible pointers to the underlying storage of a Lisp
 ;;; SIMPLE-ARRAY.
 ;;;
-;;; Currently only SBCL is supported.
+;;; Currently only Clasp, CCL and SBCL are supported.
 
 (declaim (inline array-pointer))
 
@@ -18,7 +18,9 @@
            (type simple-array array))
   #+sbcl
   (sb-sys:vector-sap (sb-ext:array-storage-vector array))
-  #-(or sbcl)
+  #+clasp
+  (ext:array-pointer (ext:array-storage-vector array))
+  #-(or clasp sbcl)
   (error "ARRAY-POINTER not implemented."))
 
 (defmacro with-array-pointers (bindings &body body)
@@ -32,7 +34,7 @@ WARNING: Do not close over these pointers or otherwise store them outside of the
                  bindings)
           (bindings)
           "Malformed bindings in WITH-ARRAY-POINTERS. Given ~S" bindings)
-  #- (or sbcl ccl ecl)
+  #- (or sbcl ccl ecl clasp)
   (error "WITH-ARRAY-POINTERS unsupported on ~A" (lisp-implementation-type))
 
   (let* ((symbols (mapcar #'first bindings))
@@ -50,6 +52,10 @@ WARNING: Do not close over these pointers or otherwise store them outside of the
                (declare (type sb-sys:system-area-pointer ,@symbols)
                         #+#:ignore (dynamic-extent ,@symbols))
                ,@body))
+           #+clasp
+           (ext:pinned-objects-funcall ,symbols
+            (lambda ()
+              ,@body))
 
            #+ccl
            (progn

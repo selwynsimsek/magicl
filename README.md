@@ -8,7 +8,7 @@ _Matrix Algebra proGrams In Common Lisp_ by [Rigetti Computing](http://www.riget
 
 ## Requirements
 
- * SBCL (> 1.3.19) or CCL (>= 1.11) on AMD64
+ * SBCL (> 1.3.19), CCL (>= 1.11) or Clasp on AMD64
  * quicklisp
  * libffi
  * BLAS and LAPACK
@@ -16,7 +16,7 @@ _Matrix Algebra proGrams In Common Lisp_ by [Rigetti Computing](http://www.riget
  Detailed instructions on how to install `libffi` and BLAS/LAPACK can
  be found [here](doc/requirements.md).
 
- Currently this library is SBCL- and CCL-only. The non-portable code
+ Currently this library is supported only on SBCL, CCL and Clasp. The non-portable code
  is in `with-array-pointers.lisp` and `magicl.lisp`.
 
 ## Installation
